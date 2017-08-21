@@ -8,7 +8,9 @@ Vagrant.configure(2) do |config|
   end
   config.vm.network "forwarded_port", guest: 80, host: 8080 # Forwarding the port for serving websites
   config.vm.network :private_network, ip: "192.168.20.13" # Assigning ip address to connect through putty
-  config.vm.synced_folder "../../sites", "/var/www", type: "smb" # Synced folders using SMB (only for Windows)
+  config.vm.synced_folder "../../sites", "/var/www", type: "smb",
+    owner: 'vagrant', group: 'www-data',
+    mount_options: ["dir_mode=0775,file_mode=0776"] # Synced folders using SMB (only for Windows)
   config.vm.synced_folder "../../scripts", "/home/vagrant/bin", type: "smb" # You can add any synced folder that you want
   config.vm.hostname = 'cydetec.dev' # Hostname for Vagrant Host Manager
   config.hostmanager.enabled = true
