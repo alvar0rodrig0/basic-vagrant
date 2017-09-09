@@ -1,0 +1,26 @@
+# Basic configuration to run Vagrant on macOS
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-16.04" # Box with Ubuntu 16.04 LTS
+  config.vm.network "forwarded_port", guest: 80, host: 8080 # Forwarding the port for serving websites
+  config.vm.network :private_network, ip: "192.168.20.13" # Assigning ip address
+  config.vm.synced_folder "../../sites", "/sites", type: "nfs" # Synced folders using NFS
+  config.vm.synced_folder "../../scripts", "/scripts", type: "nfs" # You can add any synced folder that you want
+  config.bindfs.bind_folder "/sites", "/var/www" # Mounting folder to correct ownership and permissions problems with NFS
+  config.bindfs.bind_folder "/scripts", "/home/vagrant/bin" # You need to have installed the plugin vagrant-bindfs
+  config.bindfs.default_options = {
+    force_user:   'vagrant',
+    force_group:  'www-data',
+    perms:        'u=rwx:g=rwx:o=r' # Options to be able to write and execute the files mounted by bindfs
+  }
+  config.vm.provider "virtualbox" do |vb| # VirtualBox provider
+     vb.name = "vagrant_mac" # Name of the Virtual Machine, you can select yours
+     vb.memory = 2048 # Ram memory for virtual machine
+     vb.cpus = 2 # Number of CPU's for virtual machine
+  end
+  config.vm.hostname = 'cydetec.dev' # Hostname for Vagrant Host Manager
+  config.hostmanager.enabled = true
+  config.hostmanager.manage_host = true
+  config.hostmanager.include_offline = true
+  config.hostmanager.ignore_private_ip = false
+  config.hostmanager.aliases = %w(other.dev other2.dev) # Alternative hostnames. Each hostname can have a config file in nginx
+end
